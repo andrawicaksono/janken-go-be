@@ -1,13 +1,21 @@
+const {
+  doc,
+  collection,
+  setDoc,
+  query,
+  where,
+  getDocs,
+} = require("firebase/firestore");
 const { Player, playerConverter } = require("../models/player");
 const { AppError } = require("../utils/error");
 
-const createPlayer = (firestore, db) => async (data) => {
+const createPlayer = (db) => async (data) => {
   try {
-    const newPlayerRef = firestore
-      .doc(firestore.collection(db, "players"))
-      .withConverter(playerConverter);
+    const newPlayerRef = doc(collection(db, "players")).withConverter(
+      playerConverter
+    );
 
-    await firestore.setDoc(newPlayerRef, new Player(data));
+    await setDoc(newPlayerRef, new Player(data));
 
     return [newPlayerRef, null];
   } catch (err) {
@@ -15,14 +23,11 @@ const createPlayer = (firestore, db) => async (data) => {
   }
 };
 
-const findPlayerByUid = (firestore, db) => async (uid) => {
+const findPlayerByUid = (db) => async (uid) => {
   try {
-    const q = firestore.query(
-      firestore.collection(db, "players"),
-      firestore.where("uid", "==", uid)
-    );
+    const q = query(collection(db, "players"), where("uid", "==", uid));
 
-    const querySnapshot = await firestore.getDocs(q);
+    const querySnapshot = await getDocs(q);
     if (querySnapshot.empty) throw new AppError(404, "Player not found");
 
     const player = querySnapshot.docs[0].data();
@@ -33,9 +38,9 @@ const findPlayerByUid = (firestore, db) => async (uid) => {
   }
 };
 
-module.exports = (firestore, db) => {
+module.exports = (db) => {
   return {
-    createPlayer: createPlayer(firestore, db),
-    findPlayerByUid: findPlayerByUid(firestore, db),
+    createPlayer: createPlayer(db),
+    findPlayerByUid: findPlayerByUid(db),
   };
 };

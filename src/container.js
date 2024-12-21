@@ -21,18 +21,12 @@ const authMiddleware = AuthMiddleware(config.firebase.admin);
 const checkController = CheckController();
 
 // Player
-const playerRepository = PlayerRepository(
-  config.firebase.firestore,
-  config.firebase.db
-);
+const playerRepository = PlayerRepository(config.firebase.db);
 const playerService = PlayerService(playerRepository);
 const playerController = PlayerController(playerService);
 
 // Auth
-const userRepository = UserRepository(
-  config.firebase.fireauth,
-  config.firebase.auth
-);
+const userRepository = UserRepository(config.firebase.auth);
 const authService = AuthService(userRepository, playerRepository);
 const authController = AuthController(authService);
 

@@ -24,4 +24,4 @@ const app = firebase.initializeApp(firebaseConfig);
 const db = firestore.getFirestore(app);
 const auth = fireauth.getAuth(app);
 
-module.exports = { admin, app, db, auth, firebase, firestore, fireauth };
+module.exports = { admin, app, db, auth };
