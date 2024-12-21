@@ -29,13 +29,13 @@ const loginWithEmail = (authService) => async (req, res, next) => {
   };
 
   try {
-    const [newUser, err] = await authService.loginWithEmail(data);
+    const [user, err] = await authService.loginWithEmail(data);
     if (err) throw err;
 
     res.status(200).json({
       success: true,
       message: "User logged in with email success",
-      data: formatter.auth.user(newUser),
+      data: formatter.auth.user(user),
     });
   } catch (err) {
     next(err);
