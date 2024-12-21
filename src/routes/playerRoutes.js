@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { playerController, authMiddleware } = require("../container");
+const { validateInput } = require("../middlewares/inputMiddleware");
+const { updateNicknameSchema } = require("../validators/playerValidator");
 
 router.get(
   "/current",
@@ -10,6 +12,7 @@ router.get(
 
 router.put(
   "/nickname",
+  validateInput(updateNicknameSchema),
   authMiddleware.verifyToken,
   playerController.updateNickname
 );
