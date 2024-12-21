@@ -8,4 +8,10 @@ router.get(
   playerController.getCurrentPlayer
 );
 
+router.put(
+  "/nickname",
+  authMiddleware.verifyToken,
+  playerController.updateNickname
+);
+
 module.exports = router;
