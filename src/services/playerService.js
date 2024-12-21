@@ -3,7 +3,7 @@ const getPlayerByUid = (playerRepository) => async (uid) => {
     const [player, playerErr] = await playerRepository.findPlayerByUid(uid);
     if (playerErr) throw playerErr;
 
-    return [player.data(), null];
+    return [{ id: player.id, ...player.data() }, null];
   } catch (err) {
     return [null, err];
   }
@@ -32,7 +32,7 @@ const updateNickname = (playerRepository) => async (data) => {
 
     if (errUpdate) throw errUpdate;
 
-    return [updatedPlayer, null];
+    return [{ id: player.id, ...updatedPlayer }, null];
   } catch (err) {
     return [null, err];
   }
