@@ -38,8 +38,29 @@ const registerWithEmail =
     }
   };
 
+const loginWithEmail = (userRepository) => async (data) => {
+  try {
+    const [user, userErr] = await userRepository.loginWithEmail(data);
+    if (userErr) {
+      if (
+        userErr instanceof FirebaseError &&
+        userErr.code === "auth/invalid-credential"
+      ) {
+        throw new AppError(400, "Invalid email/password");
+      }
+
+      throw userErr;
+    }
+
+    return [user, null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
 module.exports = (userRepository, playerRepository) => {
   return {
     registerWithEmail: registerWithEmail(userRepository, playerRepository),
+    loginWithEmail: loginWithEmail(userRepository),
   };
 };

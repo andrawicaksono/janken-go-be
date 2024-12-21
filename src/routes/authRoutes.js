@@ -10,4 +10,6 @@ router.post(
   authController.registerWithEmail
 );
 
+router.post("/login", validateInput(authSchema), authController.loginWithEmail);
+
 module.exports = router;
