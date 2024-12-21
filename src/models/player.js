@@ -8,6 +8,9 @@ class Player {
     this.gamesPlayed = data.gamesPlayed;
     this.gamesWon = data.gamesWon;
     this.gamesLost = data.gamesLost;
+    this.createdAt = data.createdAt;
+    this.updatedAt = data.updatedAt;
+    this.deletedAt = data.deletedAt;
   }
 }
 
@@ -22,6 +25,9 @@ const playerConverter = {
       games_played: player.gamesPlayed,
       games_won: player.gamesWon,
       games_lost: player.gamesLost,
+      created_at: player.createdAt,
+      updated_at: player.updatedAt,
+      deleted_at: player.deletedAt,
     };
   },
   fromFirestore: (snapshot, options) => {

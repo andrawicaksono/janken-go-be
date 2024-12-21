@@ -27,6 +27,9 @@ const registerWithEmail =
         gamesPlayed: 0,
         gamesWon: 0,
         gamesLost: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        deletedAt: null,
       };
 
       const [_, errPlayer] = await playerRepository.createPlayer(playerData);
