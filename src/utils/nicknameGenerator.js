@@ -1,4 +1,3 @@
-// List of nickname components
 const adjectives = [
   "Speedy",
   "Silent",

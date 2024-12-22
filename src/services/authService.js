@@ -1,69 +1,56 @@
-const { FirebaseError } = require("firebase/app");
+const bcrypt = require("bcrypt");
 const { AppError } = require("../utils/error");
-const generateAvatar = require("../utils/avatarGenerator");
 const generateNickname = require("../utils/nicknameGenerator");
+const generateAvatar = require("../utils/avatarGenerator");
 
-const registerWithEmail =
-  (userRepository, playerRepository) => async (data) => {
-    try {
-      const [user, userErr] = await userRepository.createUser(data);
-      if (userErr) {
-        if (
-          userErr instanceof FirebaseError &&
-          userErr.code === "auth/email-already-in-use"
-        ) {
-          throw new AppError(409, "Email already in use");
-        }
-
-        throw userErr;
-      }
-
-      const playerData = {
-        uid: user.uid,
-        nickname: generateNickname(),
-        photoUrl: generateAvatar(),
-        score: 0,
-        xp: 0,
-        gamesPlayed: 0,
-        gamesWon: 0,
-        gamesLost: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        deletedAt: null,
-      };
-
-      const [_, errPlayer] = await playerRepository.createPlayer(playerData);
-      if (errPlayer) throw errPlayer;
-
-      return [user, null];
-    } catch (err) {
-      return [null, err];
-    }
-  };
-
-const loginWithEmail = (userRepository) => async (data) => {
+const registerWithEmail = (userRepository) => async (data) => {
   try {
-    const [user, userErr] = await userRepository.loginWithEmail(data);
-    if (userErr) {
-      if (
-        userErr instanceof FirebaseError &&
-        userErr.code === "auth/invalid-credential"
-      ) {
-        throw new AppError(400, "Invalid email/password");
-      }
+    const [user, errUser] = await userRepository.findUserByEmail(data.email);
+    if (errUser) throw errUser;
+    if (user) throw new AppError(409, "Email has already in use");
 
-      throw userErr;
-    }
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+    const nickname = generateNickname();
+    const avatarUrl = generateAvatar();
 
-    return [user, null];
+    const userInput = {
+      email: data.email,
+      password: hashedPassword,
+      nickname,
+      avatarUrl,
+    };
+
+    const [newUser, errNewUser] = await userRepository.createUser(userInput);
+    if (errNewUser) throw errNewUser;
+
+    return [newUser, null];
   } catch (err) {
     return [null, err];
   }
 };
 
-module.exports = (userRepository, playerRepository) => {
+const loginWithEmail = (userRepository, tokenService) => async (data) => {
+  try {
+    const [user, err] = await userRepository.findUserByEmail(data.email);
+    if (err) throw err;
+
+    if (!user) throw new AppError(401, "User not found");
+
+    const isMatch = await bcrypt.compare(data.password, user.password);
+    if (!isMatch) throw new AppError(401, "Wrong password");
+
+    const token = tokenService.sign({ id: user.id });
+
+    return [{ user: user, token: token }, null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
+module.exports = (userRepository, tokenService) => {
   return {
-    registerWithEmail: registerWithEmail(userRepository, playerRepository),
-    loginWithEmail: loginWithEmail(userRepository),
+    registerWithEmail: registerWithEmail(userRepository),
+    loginWithEmail: loginWithEmail(userRepository, tokenService),
   };
 };

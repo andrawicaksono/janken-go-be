@@ -1,20 +1,18 @@
-const getLeaderboards = (playerRepository) => async (uid, limit) => {
+const getLeaderboard = (userRepository) => async (id, limit) => {
   try {
-    const [players, playersErr] = await playerRepository.findPlayers();
-    if (playersErr) throw playersErr;
+    const [users, usersErr] = await userRepository.findLeaderboard(id, limit);
+    if (usersErr) throw usersErr;
 
-    const leaderboards = players.slice(0, limit);
+    const userRank = users.find((user) => user.id === id).rank;
 
-    const playerRank = players.findIndex((player) => player.uid === uid) + 1;
-
-    return [{ leaderboards, player_rank: playerRank }, null];
+    return [{ leaderboard: users, user_rank: userRank }, null];
   } catch (err) {
     return [null, err];
   }
 };
 
-module.exports = (playerRepository) => {
+module.exports = (userRepository) => {
   return {
-    getLeaderboards: getLeaderboards(playerRepository),
+    getLeaderboard: getLeaderboard(userRepository),
   };
 };

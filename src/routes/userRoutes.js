@@ -1,20 +1,20 @@
 const express = require("express");
 const router = express.Router();
-const { playerController, authMiddleware } = require("../container");
+const { userController, authMiddleware } = require("../container");
 const { validateInput } = require("../middlewares/inputMiddleware");
-const { updateNicknameSchema } = require("../validators/playerValidator");
+const { updateUserSchema } = require("../validators/userValidator");
 
 router.get(
   "/current",
   authMiddleware.verifyToken,
-  playerController.getCurrentPlayer
+  userController.getCurrentUser
 );
 
 router.put(
-  "/nickname",
-  validateInput(updateNicknameSchema),
+  "/",
+  validateInput(updateUserSchema),
   authMiddleware.verifyToken,
-  playerController.updateNickname
+  userController.updateUser
 );
 
 module.exports = router;

@@ -5,7 +5,7 @@ const { leaderboardController, authMiddleware } = require("../container");
 router.get(
   "/",
   authMiddleware.verifyToken,
-  leaderboardController.getLeaderboards
+  leaderboardController.getLeaderboard
 );
 
 module.exports = router;
