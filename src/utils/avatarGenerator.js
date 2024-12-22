@@ -1,9 +1,9 @@
 const avatars = [
-  "https://picsum.photos/200/200",
-  "https://picsum.photos/200/200",
-  "https://picsum.photos/200/200",
-  "https://picsum.photos/200/200",
-  "https://picsum.photos/200/200",
+  "https://lh3.googleusercontent.com/d/1E1ScXZsSMEIv0YdRJjWoiCqaSFKVePQv",
+  "https://lh3.googleusercontent.com/d/1tBzDMDdAjlkIcmliHmlH2ljeuSM1QxPJ",
+  "https://lh3.googleusercontent.com/d/1_fB5cyuGW8e2rFZuQf9G45ldKTTbs7Fu",
+  "https://lh3.googleusercontent.com/d/13kvSext4wOSL-6u-n9LNJTrkH9zMWFVR",
+  "https://lh3.googleusercontent.com/d/1lglBhXaLprO4BfhbGJhJOAwyXQJOTscB",
 ];
 
 const generateAvatar = () =>
