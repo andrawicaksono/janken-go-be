@@ -1,24 +1,24 @@
 const register = (data) => {
-  return {
+  const result = {
     id: data.id,
     email: data.email,
-    nickname: data.nickname,
-    avatar_url: data.avatar_url,
-    created_at: data.created_at,
-    updated_at: data.updated_at,
   };
+
+  if (data.google_id) result.google_id = data.google_id;
+
+  return result;
 };
 
 const login = (data) => {
+  const user = {
+    id: data.user.id,
+    email: data.user.email,
+  };
+
+  if (data.user.google_id) user.google_id = data.user.google_id;
+
   return {
-    user: {
-      id: data.user.id,
-      email: data.user.email,
-      nickname: data.user.nickname,
-      avatar_url: data.user.avatar_url,
-      created_at: data.user.created_at,
-      updated_at: data.user.updated_at,
-    },
+    user,
     token: data.token,
   };
 };

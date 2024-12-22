@@ -2,46 +2,50 @@ DROP TABLE IF EXISTS rounds;
 DROP TABLE IF EXISTS games;
 DROP TABLE IF EXISTS users;
 
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id serial PRIMARY KEY,
-  email varchar(255) UNIQUE,
+  email varchar(255) UNIQUE NOT NULL,
   password varchar(255),
-  nickname varchar(255),
-  photo_url varchar(255),
-  score integer DEFAULT 0,
-  xp integer DEFAULT 0,
-  games_played integer DEFAULT 0,
-  games_won integer DEFAULT 0,
-  games_lost integer DEFAULT 0,
-  created_at timestamp DEFAULT now(),
-  updated_at timestamp DEFAULT now(),
+  google_id varchar(255),
+  nickname varchar(255) NOT NULL,
+  avatar_url varchar(255) NOT NULL,
+  score integer DEFAULT 0 NOT NULL,
+  xp integer DEFAULT 0 NOT NULL,
+  games_played integer DEFAULT 0 NOT NULL,
+  games_won integer DEFAULT 0 NOT NULL,
+  games_lost integer DEFAULT 0 NOT NULL,
+  created_at timestamp DEFAULT now() NOT NULL,
+  updated_at timestamp DEFAULT now() NOT NULL,
   deleted_at timestamp DEFAULT null
 );
 
-CREATE TABLE games (
+CREATE TABLE IF NOT EXISTS games (
   id serial PRIMARY KEY,
-  player1_id integer,
-  player2_id integer,
-  round int DEFAULT 0,
-  player1_wins integer DEFAULT 0,
-  player2_wins integer DEFAULT 0,
-  winner_id integer,
-  player1_score integer DEFAULT 0,
-  player2_score integer DEFAULT 0,
-  player1_xp integer DEFAULT 0,
-  player2_xp integer DEFAULT 0,
-  created_at timestamp DEFAULT now(),
-  updated_at timestamp DEFAULT now(),
+  player1_id integer NOT NULL,
+  player2_id integer NOT NULL,
+  rounds_played int DEFAULT 1 NOT NULL,
+  player1_wins integer DEFAULT 0 NOT NULL,
+  player2_wins integer DEFAULT 0 NOT NULL,
+  winner_id integer NOT NULL,
+  player1_score integer DEFAULT 0 NOT NULL,
+  player2_score integer DEFAULT 0 NOT NULL,
+  player1_xp integer DEFAULT 0 NOT NULL,
+  player2_xp integer DEFAULT 0 NOT NULL,
+  created_at timestamp DEFAULT now() NOT NULL,
+  updated_at timestamp DEFAULT now() NOT NULL,
   deleted_at timestamp DEFAULT null
 );
 
-CREATE TABLE rounds (
+CREATE TABLE IF NOT EXISTS rounds (
   id serial PRIMARY KEY,
-  game_id integer,
-  round_number integer,
+  game_id integer NOT NULL,
+  round_number integer NOT NULL,
   player1_choice char(1),
   player2_choice char(1),
-  winner_id integer
+  winner_id integer,
+  created_at timestamp DEFAULT now() NOT NULL,
+  updated_at timestamp DEFAULT now() NOT NULL,
+  deleted_at timestamp DEFAULT null
 );
 
 ALTER TABLE games ADD FOREIGN KEY (player1_id) REFERENCES users (id);

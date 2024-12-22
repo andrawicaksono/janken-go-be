@@ -1,3 +1,5 @@
+const formatter = require("../utils/responseFormatter");
+
 const getCurrentUser = (userService) => async (req, res, next) => {
   const user = req.user;
 
@@ -8,7 +10,7 @@ const getCurrentUser = (userService) => async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Get current user success",
-      data: currentUser,
+      data: formatter.user(currentUser),
     });
   } catch (err) {
     next(err);
@@ -26,13 +28,13 @@ const updateUser = (userService) => async (req, res, next) => {
   };
 
   try {
-    const [user, err] = await userService.updateUser(data);
+    const [updatedUser, err] = await userService.updateUser(data);
     if (err) throw err;
 
     res.status(200).json({
       success: true,
       message: "Update user success",
-      data: user,
+      data: formatter.user(updatedUser),
     });
   } catch (err) {
     next(err);

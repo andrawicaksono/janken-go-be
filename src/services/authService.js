@@ -3,11 +3,11 @@ const { AppError } = require("../utils/error");
 const generateNickname = require("../utils/nicknameGenerator");
 const generateAvatar = require("../utils/avatarGenerator");
 
-const register = (userRepository) => async (data) => {
+const registerWithEmail = (userRepository) => async (data) => {
   try {
     const [user, errUser] = await userRepository.findUserByEmail(data.email);
     if (errUser) throw errUser;
-    if (user) throw new AppError("Email has already registered", 409);
+    if (user) throw new AppError(409, "Email has already in use");
 
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(data.password, saltRounds);
@@ -30,15 +30,15 @@ const register = (userRepository) => async (data) => {
   }
 };
 
-const login = (userRepository, tokenService) => async (data) => {
+const loginWithEmail = (userRepository, tokenService) => async (data) => {
   try {
     const [user, err] = await userRepository.findUserByEmail(data.email);
     if (err) throw err;
 
-    if (!user) throw new AppError("User not found", 401);
+    if (!user) throw new AppError(401, "User not found");
 
     const isMatch = await bcrypt.compare(data.password, user.password);
-    if (!isMatch) throw new AppError("Wrong password", 401);
+    if (!isMatch) throw new AppError(401, "Wrong password");
 
     const token = tokenService.sign({ id: user.id });
 
@@ -50,7 +50,7 @@ const login = (userRepository, tokenService) => async (data) => {
 
 module.exports = (userRepository, tokenService) => {
   return {
-    register: register(userRepository),
-    login: login(userRepository, tokenService),
+    registerWithEmail: registerWithEmail(userRepository),
+    loginWithEmail: loginWithEmail(userRepository, tokenService),
   };
 };

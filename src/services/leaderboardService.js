@@ -1,11 +1,11 @@
-const getLeaderboard = (userRepository) => async (limit, id) => {
+const getLeaderboard = (userRepository) => async (id, limit) => {
   try {
-    const [users, usersErr] = await userRepository.findLeaderboard(limit, id);
+    const [users, usersErr] = await userRepository.findLeaderboard(id, limit);
     if (usersErr) throw usersErr;
 
     const userRank = users.find((user) => user.id === id).rank;
 
-    users.return[({ leaderboard: users, user_rank: userRank }, null)];
+    return [{ leaderboard: users, user_rank: userRank }, null];
   } catch (err) {
     return [null, err];
   }

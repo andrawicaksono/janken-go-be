@@ -1,7 +1,11 @@
+const { AppError } = require("../utils/error");
+
 const getUserById = (userRepository) => async (id) => {
   try {
     const [user, userErr] = await userRepository.findUserById(id);
     if (userErr) throw userErr;
+
+    if (!user) throw new AppError(404, "User not found");
 
     return [user, null];
   } catch (err) {

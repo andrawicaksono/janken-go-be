@@ -9,7 +9,7 @@ done
 echo "Running migrations..."
 for f in /usr/src/app/migrations/*.sql; do
   echo "Applying $f..."
-  psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -f "$f"
+  PGPASSWORD=$DB_PASSWORD psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -f "$f"
 done
 
 echo "Migrations applied successfully."
