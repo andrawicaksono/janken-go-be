@@ -1,5 +1,12 @@
-const auth = require("./auth");
+const { register, login } = require("./authResponseFormatter");
+const { currentUser } = require("./userResponseFormatter");
 
 module.exports = {
-  auth,
+  auth: {
+    register,
+    login,
+  },
+  user: {
+    currentUser,
+  },
 };

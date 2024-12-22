@@ -1,10 +1,10 @@
-const getLeaderboards = (leaderboardService) => async (req, res, next) => {
+const getLeaderboard = (leaderboardService) => async (req, res, next) => {
   const { limit } = req.query;
   const user = req.user;
 
   try {
-    const [leaderboards, err] = await leaderboardService.getLeaderboards(
-      user.uid,
+    const [leaderboard, err] = await leaderboardService.getLeaderboard(
+      user.id,
       limit
     );
     if (err) throw err;
@@ -12,7 +12,7 @@ const getLeaderboards = (leaderboardService) => async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Get leaderboard success",
-      data: leaderboards,
+      data: leaderboard,
     });
   } catch (err) {
     next(err);
@@ -21,6 +21,6 @@ const getLeaderboards = (leaderboardService) => async (req, res, next) => {
 
 module.exports = (leaderboardService) => {
   return {
-    getLeaderboards: getLeaderboards(leaderboardService),
+    getLeaderboard: getLeaderboard(leaderboardService),
   };
 };

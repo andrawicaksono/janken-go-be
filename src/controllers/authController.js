@@ -14,7 +14,7 @@ const registerWithEmail = (authService) => async (req, res, next) => {
     res.status(201).json({
       success: true,
       message: "Register user with email success",
-      data: formatter.auth.user(newUser),
+      data: formatter.auth.register(newUser),
     });
   } catch (err) {
     next(err);
@@ -35,7 +35,7 @@ const loginWithEmail = (authService) => async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "User logged in with email success",
-      data: formatter.auth.user(user),
+      data: formatter.auth.login(user),
     });
   } catch (err) {
     next(err);

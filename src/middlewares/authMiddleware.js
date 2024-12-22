@@ -1,4 +1,4 @@
-const verifyToken = (admin) => async (req, res, next) => {
+const verifyToken = (userService, tokenService) => async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   try {
@@ -9,9 +9,12 @@ const verifyToken = (admin) => async (req, res, next) => {
 
     if (!token) throw Error("Invalid token");
 
-    const decoded = await admin.auth().verifyIdToken(token);
+    const decoded = tokenService.verify(token);
 
-    req.user = decoded;
+    const [user, err] = await userService.getUserById(decoded.id);
+    if (err) throw err;
+
+    req.user = user;
 
     next();
   } catch (err) {
@@ -23,8 +26,8 @@ const verifyToken = (admin) => async (req, res, next) => {
   }
 };
 
-module.exports = (admin) => {
+module.exports = (userService, tokenService) => {
   return {
-    verifyToken: verifyToken(admin),
+    verifyToken: verifyToken(userService, tokenService),
   };
 };
