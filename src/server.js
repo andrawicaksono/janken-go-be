@@ -12,7 +12,11 @@ const Socket = require("./socket");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.use(cors());
 
@@ -24,4 +28,4 @@ app.use(errorHandler);
 
 Socket(io);
 
-module.exports = { server, port: config.port };
+module.exports = { server, port: config.port, io };
