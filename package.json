@@ -2,10 +2,10 @@
   "name": "janken-go-be",
   "version": "1.0.0",
   "description": "The backend service for Janken Go, an online multiplayer rock-paper-scissors game. Built with modern web technologies to deliver seamless real-time gameplay and account management.",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
