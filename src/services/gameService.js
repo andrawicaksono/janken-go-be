@@ -103,8 +103,10 @@ const saveGameResult =
       const randomXp = getRandomInt(100, 200);
       const player1Score = randomScore * data.player1Wins;
       const player2Score = randomScore * data.player2Wins;
-      const player1Xp = randomXp * data.player1Wins;
-      const player2Xp = randomXp * data.player2Wins;
+      const player1Xp =
+        randomXp * (data.player1Wins > 0 ? data.player1Wins : 1);
+      const player2Xp =
+        randomXp * (data.player2Wins > 0 ? data.player1Wins : 1);
 
       const updateData = {
         id: data.id,
