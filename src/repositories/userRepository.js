@@ -66,9 +66,25 @@ const updateUser = (db) => async (data) => {
   try {
     const result = await db.query(query, [
       data.nickname,
-      data.avatar_url,
+      data.avatarUrl,
       data.id,
     ]);
+
+    return [result.rows[0], null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
+const updateUserStats = () => async (data, client) => {
+  const query = `UPDATE users SET score = score + $1, xp = xp + $2, games_played = games_played + 1, ${
+    data.isWon ? "games_won" : "games_lost"
+  } = ${
+    data.isWon ? "games_won" : "games_lost"
+  } + 1, updated_at = NOW() WHERE id = $3 RETURNING *`;
+
+  try {
+    const result = await client.query(query, [data.score, data.xp, data.id]);
 
     return [result.rows[0], null];
   } catch (err) {
@@ -95,6 +111,7 @@ module.exports = (db) => {
     findLeaderboard: findLeaderboard(db),
     createUser: createUser(db),
     updateUser: updateUser(db),
+    updateUserStats: updateUserStats(db),
     deleteUser: deleteUser(db),
   };
 };

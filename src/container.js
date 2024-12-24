@@ -2,18 +2,22 @@ const config = require("./config");
 
 // Repositories
 const UserRepository = require("./repositories/userRepository");
+const GameRepository = require("./repositories/gameRepository");
+const RoundRepository = require("./repositories/roundRepository");
 
 // Services
 const AuthService = require("./services/authService");
 const UserService = require("./services/userService");
 const LeaderboardService = require("./services/leaderboardService");
 const TokenService = require("./services/tokenService");
+const GameService = require("./services/gameService");
 
 // Controllers
 const AuthController = require("./controllers/authController");
 const UserController = require("./controllers/userController");
 const CheckController = require("./controllers/checkController");
 const LeaderboardController = require("./controllers/leaderboardController");
+const GameController = require("./controllers/gameController");
 
 // Check
 const checkController = CheckController();
@@ -34,6 +38,17 @@ const authController = AuthController(authService);
 const leaderboardService = LeaderboardService(userRepository);
 const leaderboardController = LeaderboardController(leaderboardService);
 
+// Game
+const gameRepository = GameRepository(config.db);
+const roundRepository = RoundRepository(config.db);
+const gameService = GameService(
+  gameRepository,
+  roundRepository,
+  userRepository,
+  config.db
+);
+const gameController = GameController(gameService, roundRepository);
+
 // Middlewares
 const AuthMiddleware = require("./middlewares/authMiddleware");
 const authMiddleware = AuthMiddleware(userService, tokenService);
@@ -43,5 +58,6 @@ module.exports = {
   authController,
   userController,
   leaderboardController,
+  gameController,
   authMiddleware,
 };

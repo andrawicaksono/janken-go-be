@@ -20,9 +20,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS games (
   id serial PRIMARY KEY,
-  room_code varchar(255),
   player1_id integer NOT NULL,
-  player2_id integer NOT NULL,
+  player2_id integer,
   rounds_played int DEFAULT 0 NOT NULL,
   player1_wins integer DEFAULT 0 NOT NULL,
   player2_wins integer DEFAULT 0 NOT NULL,
