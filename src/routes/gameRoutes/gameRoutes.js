@@ -14,4 +14,10 @@ router.post(
   gameController.createOnlineGame
 );
 
+router.post(
+  "/join/:id",
+  authMiddleware.verifyToken,
+  gameController.joinOnlineGame
+);
+
 module.exports = router;
