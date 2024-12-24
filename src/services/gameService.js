@@ -78,6 +78,7 @@ const saveGameResult =
       if (errGame) throw errGame;
 
       if (!game) throw new AppError(404, "Game not found");
+      if (game.winner_id === null) throw new AppError(400, "Game is finished");
 
       let rounds = [];
 
