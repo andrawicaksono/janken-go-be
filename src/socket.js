@@ -18,7 +18,6 @@ const Socket = (io) => {
       }
     });
 
-    // Handle joining a room
     socket.on("joinRoom", (roomId) => {
       if (rooms[roomId] && rooms[roomId].players.length < 2) {
         socket.join(roomId);
@@ -29,7 +28,6 @@ const Socket = (io) => {
       }
     });
 
-    // Handle player move
     socket.on("playerMove", ({ roomId, move }) => {
       const room = rooms[roomId];
       if (room) {
@@ -66,11 +64,11 @@ const Socket = (io) => {
     });
   });
 
-  function determineWinner(move1, move2) {
+  const determineWinner = (move1, move2) => {
     const rules = { Rock: "Scissor", Scissor: "Paper", Paper: "Rock" };
     if (move1 === move2) return "draw";
     return rules[move1] === move2 ? "player1" : "player2";
-  }
+  };
 };
 
 module.exports = Socket;
