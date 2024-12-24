@@ -106,7 +106,7 @@ const saveGameResult =
       const player1Xp =
         randomXp * (data.player1Wins > 0 ? data.player1Wins : 1);
       const player2Xp =
-        randomXp * (data.player2Wins > 0 ? data.player1Wins : 1);
+        randomXp * (data.player2Wins > 0 ? data.player2Wins : 1);
 
       const updateData = {
         id: data.id,
