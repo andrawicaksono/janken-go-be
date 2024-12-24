@@ -3,7 +3,7 @@ const formatter = require("../utils/responseFormatter");
 const registerWithEmail = (authService) => async (req, res, next) => {
   const { email, password } = req.body;
   const data = {
-    email,
+    email: email.toLowerCase(),
     password,
   };
 
