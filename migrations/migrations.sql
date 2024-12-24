@@ -1,6 +1,3 @@
-DROP TABLE IF EXISTS rounds;
-DROP TABLE IF EXISTS games;
-
 CREATE TABLE IF NOT EXISTS users (
   id serial PRIMARY KEY,
   email varchar(255) UNIQUE NOT NULL,
