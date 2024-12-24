@@ -8,4 +8,10 @@ router.post(
   gameController.createOfflineGame
 );
 
+router.post(
+  "/create/online",
+  authMiddleware.verifyToken,
+  gameController.createOnlineGame
+);
+
 module.exports = router;

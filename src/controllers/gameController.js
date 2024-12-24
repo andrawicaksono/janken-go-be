@@ -9,7 +9,24 @@ const createOfflineGame = (gameService) => async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: "Create game success",
+      message: "Create offline game success",
+      data: game,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const createOnlineGame = (gameService) => async (req, res, next) => {
+  const user = req.user;
+
+  try {
+    const [game, err] = await gameService.createOnlineGame(user.id);
+    if (err) throw err;
+
+    res.status(200).json({
+      success: true,
+      message: "Create online game success",
       data: game,
     });
   } catch (err) {
@@ -20,5 +37,6 @@ const createOfflineGame = (gameService) => async (req, res, next) => {
 module.exports = (gameService) => {
   return {
     createOfflineGame: createOfflineGame(gameService),
+    createOnlineGame: createOnlineGame(gameService),
   };
 };

@@ -26,8 +26,25 @@ const createOfflineGame = (gameRepository) => async (player1Id) => {
   }
 };
 
+const createOnlineGame = (gameRepository) => async (player1Id) => {
+  const gameData = {
+    roomCode: generateRoomCode(6),
+    player1Id: player1Id,
+  };
+
+  try {
+    const [game, errGame] = await gameRepository.createGame(gameData);
+    if (errGame) throw errGame;
+
+    return [game, null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
 module.exports = (gameRepository) => {
   return {
     createOfflineGame: createOfflineGame(gameRepository),
+    createOnlineGame: createOnlineGame(gameRepository),
   };
 };
