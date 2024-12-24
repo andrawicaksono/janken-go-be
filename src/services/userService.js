@@ -21,7 +21,7 @@ const updateUser = (userRepository) => async (data) => {
 
     const updateData = {
       nickname: data.nickname ? data.nickname : user.nickname,
-      avatar_url: data.avatar_url ? data.avatar_url : user.avatar_url,
+      avatarUrl: data.avatar_url ? data.avatar_url : user.avatar_url,
       id: data.id,
     };
 

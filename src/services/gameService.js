@@ -1,4 +1,5 @@
 const { AppError } = require("../utils/error");
+const { getRandomInt } = require("../utils/randomNumberGenerator");
 
 const createOfflineGame = (gameRepository) => async (player1Id) => {
   const gameData = {
@@ -68,10 +69,129 @@ const joinOnlineGame = (gameRepository) => async (data) => {
   }
 };
 
-module.exports = (gameRepository) => {
+const saveGameResult =
+  (gameRepository, roundRepository, userRepository, db) => async (data) => {
+    const client = await db.connect();
+    try {
+      await client.query("BEGIN");
+      const [game, errGame] = await gameRepository.findGameById(data.id);
+      if (errGame) throw errGame;
+
+      if (!game) throw new AppError(404, "Game not found");
+
+      let rounds = [];
+
+      for (let i = 0; i < data.roundsPlayed; i++) {
+        const roundData = {
+          gameId: data.id,
+          roundNumber: i + 1,
+          player1Choice: data.player1Choices[i]?.toLowerCase(),
+          player2Choice: data.player2Choices[i]?.toLowerCase(),
+          roundWinnerId: data.roundsWinnerId[i],
+        };
+
+        const [round, errRound] = await roundRepository.saveRound(
+          roundData,
+          client
+        );
+        if (errRound) throw errRound;
+
+        rounds.push(round);
+      }
+
+      const randomScore = getRandomInt(50, 100);
+      const randomXp = getRandomInt(100, 200);
+      const player1Score = randomScore * data.player1Wins;
+      const player2Score = randomScore * data.player2Wins;
+      const player1Xp = randomXp * data.player1Wins;
+      const player2Xp = randomXp * data.player2Wins;
+
+      const updateData = {
+        id: data.id,
+        roundsPlayed: data.roundsPlayed,
+        player1Wins: data.player1Wins,
+        player2Wins: data.player2Wins,
+        winnerId:
+          data.player1Wins > data.player2Wins
+            ? game.player1_id
+            : game.player2_id,
+        player1Score: player1Score,
+        player2Score: player2Score,
+        player1Xp: player1Xp,
+        player2Xp: player2Xp,
+      };
+
+      const [player1, errPlayer1] = await userRepository.findUserById(
+        game.player1_id
+      );
+      if (errPlayer1) throw errPlayer1;
+      if (!player1) throw AppError(404, "User not found");
+
+      const updatePlayer1 = {
+        id: player1.id,
+        score: player1Score,
+        xp: player1Xp,
+        isWon: data.player1Wins > data.player2Wins,
+      };
+
+      const [_, errUpdatedPlayer1] = await userRepository.updateUserStats(
+        updatePlayer1,
+        client
+      );
+
+      if (errUpdatedPlayer1) throw errUpdatedPlayer1;
+
+      // Update Player 2 if isn't computer
+      if (game.player2_id) {
+        const [player2, errPlayer2] = await userRepository.findUserById(
+          game.player2_id
+        );
+        if (errPlayer2) throw errPlayer2;
+        if (!player2) throw AppError(404, "User not found");
+
+        const updatePlayer2 = {
+          id: player2.id,
+          score: player2Score,
+          xp: player2Xp,
+          isWon: data.player2Wins > data.player1Wins,
+        };
+
+        const [_, errUpdatedPlayer2] = await userRepository.updateUserStats(
+          updatePlayer2,
+          client
+        );
+        if (errUpdatedPlayer2) throw errUpdatedPlayer2;
+      }
+
+      const [updatedGame, errUpdatedGame] = await gameRepository.saveGameResult(
+        updateData,
+        client
+      );
+
+      if (errUpdatedGame) throw errUpdatedGame;
+
+      await client.query("COMMIT");
+
+      return [{ ...updatedGame, rounds }, null];
+    } catch (err) {
+      await client.query("ROLLBACK");
+
+      return [null, err];
+    } finally {
+      client.release();
+    }
+  };
+
+module.exports = (gameRepository, roundRepository, userRepository, db) => {
   return {
     createOfflineGame: createOfflineGame(gameRepository),
     createOnlineGame: createOnlineGame(gameRepository),
     joinOnlineGame: joinOnlineGame(gameRepository),
+    saveGameResult: saveGameResult(
+      gameRepository,
+      roundRepository,
+      userRepository,
+      db
+    ),
   };
 };

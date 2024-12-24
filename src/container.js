@@ -3,6 +3,7 @@ const config = require("./config");
 // Repositories
 const UserRepository = require("./repositories/userRepository");
 const GameRepository = require("./repositories/gameRepository");
+const RoundRepository = require("./repositories/roundRepository");
 
 // Services
 const AuthService = require("./services/authService");
@@ -39,8 +40,14 @@ const leaderboardController = LeaderboardController(leaderboardService);
 
 // Game
 const gameRepository = GameRepository(config.db);
-const gameService = GameService(gameRepository);
-const gameController = GameController(gameService);
+const roundRepository = RoundRepository(config.db);
+const gameService = GameService(
+  gameRepository,
+  roundRepository,
+  userRepository,
+  config.db
+);
+const gameController = GameController(gameService, roundRepository);
 
 // Middlewares
 const AuthMiddleware = require("./middlewares/authMiddleware");
