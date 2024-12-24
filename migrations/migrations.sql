@@ -1,6 +1,5 @@
 DROP TABLE IF EXISTS rounds;
 DROP TABLE IF EXISTS games;
-DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users (
   id serial PRIMARY KEY,
@@ -21,12 +20,13 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS games (
   id serial PRIMARY KEY,
+  room_code varchar(255),
   player1_id integer NOT NULL,
   player2_id integer NOT NULL,
-  rounds_played int DEFAULT 1 NOT NULL,
+  rounds_played int DEFAULT 0 NOT NULL,
   player1_wins integer DEFAULT 0 NOT NULL,
   player2_wins integer DEFAULT 0 NOT NULL,
-  winner_id integer NOT NULL,
+  winner_id integer,
   player1_score integer DEFAULT 0 NOT NULL,
   player2_score integer DEFAULT 0 NOT NULL,
   player1_xp integer DEFAULT 0 NOT NULL,
