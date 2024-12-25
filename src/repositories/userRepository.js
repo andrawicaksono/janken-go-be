@@ -27,7 +27,23 @@ const findUserByEmail = (db) => async (email) => {
 };
 
 const findLeaderboard = (db) => async (id, limit) => {
-  const query = `SELECT * FROM (SELECT id, nickname, avatar_url, xp, score, games_played, games_won, games_lost, CAST(ROW_NUMBER() OVER (ORDER BY score DESC) AS INTEGER) AS rank FROM users) AS ranked_users WHERE rank <= $1 OR id = $2`;
+  const query = `
+    SELECT * 
+      FROM (
+          SELECT 
+              id, 
+              nickname, 
+              avatar_url, 
+              xp, 
+              score, 
+              games_played, 
+              games_won, 
+              games_lost, 
+              CAST(ROW_NUMBER() OVER (ORDER BY score DESC) AS INTEGER) AS rank 
+          FROM users
+          WHERE id != 0
+      ) AS ranked_users 
+      WHERE rank <= $1 OR id = $2`;
 
   try {
     const result = await db.query(query, [limit, id]);
