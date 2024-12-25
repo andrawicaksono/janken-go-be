@@ -59,7 +59,35 @@ const saveGameResult = () => async (data, client) => {
 };
 
 const findGamesByUserId = (db) => async (userId) => {
-  const query = `SELECT * FROM games WHERE (player1_id = $1 OR player2_id = $1) AND deleted_at IS NULL AND player2_id IS NOT NULL`;
+  const query = `
+    SELECT 
+      g.id AS game_id,
+      g.player1_id,
+      u1.nickname AS player1_nickname,
+      u1.avatar_url AS player1_avatar,
+      g.player2_id,
+      u2.nickname AS player2_nickname,
+      u2.avatar_url AS player2_avatar,
+      g.rounds_played,
+      g.player1_wins,
+      g.player2_wins,
+      g.winner_id,
+      g.player1_score,
+      g.player2_score,
+      g.player1_xp,
+      g.player2_xp,
+      g.created_at,
+      g.updated_at
+    FROM 
+        games g
+    LEFT JOIN 
+        users u1 ON g.player1_id = u1.id
+    LEFT JOIN 
+        users u2 ON g.player2_id = u2.id
+    WHERE 
+        (g.player1_id = $1 OR g.player2_id = $1)
+        AND g.deleted_at IS NULL
+        AND g.player2_id IS NOT NULL`;
 
   try {
     const result = await db.query(query, [userId]);
