@@ -29,4 +29,10 @@ router.post(
   gameController.saveGameResult
 );
 
+router.get(
+  "/history",
+  authMiddleware.verifyToken,
+  gameController.getGamesHistory
+);
+
 module.exports = router;

@@ -58,11 +58,26 @@ const saveGameResult = () => async (data, client) => {
   }
 };
 
+const findGamesByUserId = (db) => async (userId) => {
+  const query = `SELECT * FROM games WHERE (player1_id = $1 OR player2_id = $1) AND deleted_at IS NULL AND player2_id IS NOT NULL`;
+
+  try {
+    const result = await db.query(query, [userId]);
+
+    if (result.rowCount === 0) return [null, null];
+
+    return [result.rows, null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
 module.exports = (db) => {
   return {
     createGame: createGame(db),
     addPlayer: addPlayer(db),
     findGameById: findGameById(db),
     saveGameResult: saveGameResult(),
+    findGamesByUserId: findGamesByUserId(db),
   };
 };

@@ -185,6 +185,17 @@ const saveGameResult =
     }
   };
 
+const getAllGamesByUserId = (gameRepository) => async (userId) => {
+  try {
+    const [games, err] = await gameRepository.findGamesByUserId(userId);
+    if (err) throw err;
+
+    return [games, null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
 module.exports = (gameRepository, roundRepository, userRepository, db) => {
   return {
     createOfflineGame: createOfflineGame(gameRepository),
@@ -196,5 +207,6 @@ module.exports = (gameRepository, roundRepository, userRepository, db) => {
       userRepository,
       db
     ),
+    getAllGamesByUserId: getAllGamesByUserId(gameRepository),
   };
 };

@@ -1,5 +1,3 @@
-const formatter = require("../utils/responseFormatter");
-
 const createOfflineGame = (gameService) => async (req, res, next) => {
   const user = req.user;
 
@@ -84,11 +82,29 @@ const saveGameResult = (gameService) => async (req, res, next) => {
   }
 };
 
+const getGamesHistory = (gameService) => async (req, res, next) => {
+  const user = req.user;
+
+  try {
+    const [games, err] = await gameService.getAllGamesByUserId(user.id);
+    if (err) throw err;
+
+    res.status(200).json({
+      success: true,
+      message: "Get games history success",
+      data: games,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = (gameService) => {
   return {
     createOfflineGame: createOfflineGame(gameService),
     createOnlineGame: createOnlineGame(gameService),
     joinOnlineGame: joinOnlineGame(gameService),
     saveGameResult: saveGameResult(gameService),
+    getGamesHistory: getGamesHistory(gameService),
   };
 };
