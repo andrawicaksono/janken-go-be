@@ -201,6 +201,8 @@ const getUserGameDetailById = (gameRepository) => async (data) => {
     const [game, err] = await gameRepository.findUserGameDetailById(data);
     if (err) throw err;
 
+    if (!game) throw new AppError(404, "Game not found");
+
     return [game, null];
   } catch (err) {
     return [null, err];
