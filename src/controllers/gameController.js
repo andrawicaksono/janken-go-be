@@ -99,6 +99,29 @@ const getGamesHistory = (gameService) => async (req, res, next) => {
   }
 };
 
+const getUserGameDetailById = (gameService) => async (req, res, next) => {
+  const user = req.user;
+  const { id } = req.params;
+
+  const data = {
+    userId: user.id,
+    gameId: id,
+  };
+
+  try {
+    const [game, err] = await gameService.getUserGameDetailById(data);
+    if (err) throw err;
+
+    res.status(200).json({
+      success: true,
+      message: "Get user game detail id by success",
+      data: game,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = (gameService) => {
   return {
     createOfflineGame: createOfflineGame(gameService),
@@ -106,5 +129,6 @@ module.exports = (gameService) => {
     joinOnlineGame: joinOnlineGame(gameService),
     saveGameResult: saveGameResult(gameService),
     getGamesHistory: getGamesHistory(gameService),
+    getUserGameDetailById: getUserGameDetailById(gameService),
   };
 };

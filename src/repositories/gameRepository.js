@@ -72,6 +72,70 @@ const findGamesByUserId = (db) => async (userId) => {
   }
 };
 
+const findUserGameDetailById = (db) => async (data) => {
+  const query = `
+    SELECT 
+      g.id AS game_id,
+      g.player1_id,
+      u1.nickname AS player1_nickname,
+      u1.avatar_url AS player1_avatar_url,
+      g.player2_id,
+      u2.nickname AS player2_nickname,
+      u2.avatar_url AS player2_avatar_url,
+      g.rounds_played,
+      g.player1_wins,
+      g.player2_wins,
+      g.winner_id,
+      uw.nickname AS winner_nickname,
+      g.player1_score,
+      g.player2_score,
+      g.player1_xp,
+      g.player2_xp,
+      g.created_at AS game_created_at,
+      g.updated_at AS game_updated_at,
+    COALESCE(json_agg(
+        json_build_object(
+            'round_id', r.id,
+            'round_number', r.round_number,
+            'player1_choice', r.player1_choice,
+            'player2_choice', r.player2_choice,
+            'winner_id', r.winner_id,
+            'round_winner_nickname', uwr.nickname,
+            'round_winner_avatar_url', uwr.avatar_url,
+            'created_at', r.created_at
+        ) ORDER BY r.round_number
+    ) FILTER (WHERE r.id IS NOT NULL), '[]') AS rounds
+    FROM 
+        games g
+    LEFT JOIN 
+        users u1 ON g.player1_id = u1.id
+    LEFT JOIN 
+        users u2 ON g.player2_id = u2.id
+    LEFT JOIN 
+        users uw ON g.winner_id = uw.id
+    LEFT JOIN 
+        rounds r ON g.id = r.game_id
+    LEFT JOIN 
+        users uwr ON r.winner_id = uwr.id
+    WHERE 
+        g.id = $1
+        AND (g.player1_id = $2 OR g.player2_id = $2)
+        AND g.deleted_at IS NULL
+        AND g.player2_id IS NOT NULL
+    GROUP BY 
+        g.id, u1.nickname, u2.nickname, uw.nickname, u1.avatar_url, u2.avatar_url, uw.avatar_url`;
+
+  try {
+    const result = await db.query(query, [data.gameId, data.userId]);
+
+    if (result.rowCount === 0) return [null, null];
+
+    return [result.rows[0], null];
+  } catch (err) {
+    return [null, err];
+  }
+};
+
 module.exports = (db) => {
   return {
     createGame: createGame(db),
@@ -79,5 +143,6 @@ module.exports = (db) => {
     findGameById: findGameById(db),
     saveGameResult: saveGameResult(),
     findGamesByUserId: findGamesByUserId(db),
+    findUserGameDetailById: findUserGameDetailById(db),
   };
 };

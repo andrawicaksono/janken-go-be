@@ -35,4 +35,10 @@ router.get(
   gameController.getGamesHistory
 );
 
+router.get(
+  "/history/:id",
+  authMiddleware.verifyToken,
+  gameController.getUserGameDetailById
+);
+
 module.exports = router;
