@@ -87,7 +87,9 @@ const findGamesByUserId = (db) => async (userId) => {
     WHERE 
         (g.player1_id = $1 OR g.player2_id = $1)
         AND g.deleted_at IS NULL
-        AND g.player2_id IS NOT NULL`;
+        AND g.player2_id IS NOT NULL
+        AND g.winner_id IS NOT NULL
+    ORDER BY created_at DESC`;
 
   try {
     const result = await db.query(query, [userId]);
