@@ -100,8 +100,17 @@ const saveGameResult =
         rounds.push(round);
       }
 
-      const randomScore = getRandomInt(50, 100);
-      const randomXp = getRandomInt(100, 200);
+      let randomScore;
+      let randomXp;
+
+      if (game.player2_id) {
+        randomScore = getRandomInt(100, 150);
+        randomXp = getRandomInt(150, 250);
+      } else {
+        randomScore = getRandomInt(50, 100);
+        randomXp = getRandomInt(100, 200);
+      }
+
       const player1Score = randomScore * data.player1Wins;
       const player2Score = randomScore * data.player2Wins;
       const player1Xp =
