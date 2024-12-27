@@ -34,7 +34,7 @@ const Socket = (io) => {
 
     socket.on("joinRoom", async (data) => {
       if (rooms[data.roomCode] && !rooms[data.roomCode].p2) {
-        if (rooms[data.roomCode.p1.id] === data.userId) {
+        if (rooms[data.roomCode].p1.id === data.userId) {
           return;
         }
 
