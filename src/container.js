@@ -60,4 +60,5 @@ module.exports = {
   leaderboardController,
   gameController,
   authMiddleware,
+  gameService,
 };
