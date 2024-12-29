@@ -18,7 +18,7 @@ const io = new Server(server, {
   },
 });
 
-app.use(cors());
+app.use(cors({ origin: "*" }));
 
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
